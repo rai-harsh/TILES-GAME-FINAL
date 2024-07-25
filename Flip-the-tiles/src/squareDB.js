@@ -1,6 +1,6 @@
 // Create and populate the arr array
 var arr = [];
-for (var i = 1; i < 6; i++) {
+for (var i = 1; i < 11; i++) {
     arr.push({
         number :i,
         img:`../public/icons/${i}.svg`
@@ -24,7 +24,7 @@ function shuffleArray(array) {
 }
 
 // Initialize the initialTiles array after arr is created and shuffled
-const initialTiles = Array.from({ length: 10 }).map((_, index) => {
+const initialTiles = Array.from({ length: 20 }).map((_, index) => {
     return {
         id: index + 1,
         selected: false,
