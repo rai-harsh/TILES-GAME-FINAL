@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './styling/App.css';
-import 'animate.css';
+import { useGame } from './Context/GeneralContext.jsx';
 
 export default function WinScreen(props){
+    const { reset} = useGame();
     const[Reset,SetReset]=useState(false)
-        function reset(){
+        function resetGame(){
             SetReset(!Reset);
             setTimeout(() => {
-                props.handleClick();
+                reset();
                 SetReset(!Reset);
             }, 2000);
         }
@@ -19,7 +20,7 @@ export default function WinScreen(props){
             <>
                 <h1 >Game won </h1>
                 <h3>Moves taken : {props.count}</h3>
-                <button class="glow-on-hover" type="button" onClick={reset}>New Game</button>
+                <button className="glow-on-hover" type="button" onClick={resetGame}>New Game</button>
             </>
             :
             <div className='loader'></div>
