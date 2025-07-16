@@ -46,7 +46,7 @@ export const GameProvider = ({ children }) => {
       clean();
     }
     else {
-      if (Selection[0].id != id) {
+      if (selected[0].id != id) {
         incrementMoveCount();
       }
       setSelected((prevSelection) => []);
