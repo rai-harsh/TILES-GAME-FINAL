@@ -14,6 +14,9 @@ function App() {
     moveCount,
     toggle,
     initTiles,
+    setAllRevealed,
+    animationTiming,
+    hint
   } = useGame();
 
   React.useEffect(() => {
@@ -26,9 +29,18 @@ function App() {
     }
   }, [initTiles]);
 
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setAllRevealed(false);
+    }, animationTiming.INITIAL_REVEAL); // 3 seconds
+
+    // Cleanup the timer if the component is unmounted
+    return () => clearTimeout(timer);
+  }, [gameWon]);
+
   //Confetti
   const { width, height } = useWindowSize()
-  // Tiles constat is responsible for rendering all the 60 tiles by mapping the raw state 
+
   const tiles = initTiles.map((item) => {
     return (
       <Tile
@@ -56,6 +68,7 @@ function App() {
           (
             <>
               <h1 className='score'>Moves taken: {moveCount}</h1>
+              <button onClick={()=> hint()}>HINT</button>
               <div className='tiles'>{tiles}</div>
             </>
           )

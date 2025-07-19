@@ -1,31 +1,19 @@
-import { useState, useEffect } from 'react';
 import './styling/Tiles.css';
 import { useGame } from './Context/GeneralContext.jsx';
 
 export default function Tile(props) {
-    const { toggle } = useGame();
-    const [isInitiallyClicked, setIsInitiallyClicked] = useState(true);
+    const { toggle, allRevealed } = useGame();
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setIsInitiallyClicked(false);
-        }, 3000); // 3 seconds
-
-        // Cleanup the timer if the component is unmounted
-        return () => clearTimeout(timer);
-    }, []);
-
-    let color, todo;
+    let color;
     if (props.won == true) {
         color = "won clicked sparkle";
     }
     else {
-        color = (props.selected || isInitiallyClicked) ? "clicked" : "";
-        todo = () => { toggle(props.id, props.num) };
+        color = (props.selected || allRevealed ) ? "clicked" : "";
     }
 
     return (
-        <div className={`tile ${color}`} onClick={todo}  >
+        <div className={`tile ${color}`} onClick={()=> toggle(props.id, props.num)}  >
             <img src={props.src} />
         </div>
     )

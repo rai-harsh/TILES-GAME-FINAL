@@ -1,4 +1,4 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import React from "react";
 
 import initialTiles from "../squareDB.js";
@@ -10,23 +10,40 @@ export const GameProvider = ({ children }) => {
   const [moveCount, setmoveCount] = useState(0);
   const [initTiles, setInitTiles] = React.useState(initialTiles);
   const [selected, setSelected] = React.useState([]);
+  const [animationTiming, setAnimationTiming] = React.useState(
+    {
+      FLIP_DELAY: 400,  // ms
+      INITIAL_REVEAL: 1000,
+      HINT_INTERVAL: 1000
+    })
+  const [allRevealed, setAllRevealed] = React.useState(true)
 
-
-  const resetGame = () => {
-    setGameWon(false);
-  }
   const completeGame = () => {
     setGameWon(true);
   }
+
   const incrementMoveCount = () => {
     setmoveCount(prevCount => prevCount + 1)
   }
-  const countZero = () => {
-    setmoveCount(0);
-  }
+
+  const hint = () => {
+    // Don't allow hints when tiles are already revealed
+    if (allRevealed) return;
+
+    // Reveal all tiles temporarily
+    setAllRevealed(true);
+
+    // Set timeout to hide them again after 2 seconds
+    const hintTimer = setTimeout(() => {
+      setAllRevealed(false);
+    }, animationTiming.HINT_INTERVAL);
+
+    return () => clearTimeout(hintTimer); // Cleanup
+  };
 
   function toggle(id, num) {
     // calling the selection function that pushes the tile number inside the array
+    if(allRevealed) return;
     setInitTiles((prevTile) => {
       return prevTile.map((item) => {
         return item.id === id ? { ...item, selected: !item.selected } : item;
@@ -36,26 +53,34 @@ export const GameProvider = ({ children }) => {
   }
 
   const selection = (id, num) => {
+    // if its the first tile selected
     if (selected.length == 0) {
+      console.log(`first- id: ${id} num: ${num}`)
       setSelected((prevSelection) => [...prevSelection, { number: num, id: id }]); // Pushes num of the selected object inside array
-    }
-    else if (selected[0].number == num && selected[0].id != id) {
       incrementMoveCount();
+      return;
+    }
+    // if  its the second tile clicked and is not the same as the first one
+    else if (selected[0].number == num && selected[0].id != id) {
+      console.log(`second- id: ${id} num: ${num}`)
       setSelected((prevSelection) => []);
       win(id, selected[0].id)
       clean();
+      incrementMoveCount();
+      return;
     }
     else {
-      if (selected[0].id != id) {
+      console.log(`second- id: ${id} num: ${num}`)
+      if (selected[0].number != num) {
+        // tile mismatch case
         incrementMoveCount();
       }
       setSelected((prevSelection) => []);
       setTimeout(() => {
         clean();
-      }, 400);
+      }, animationTiming.FLIP_DELAY);
     }
   }
-
 
   function win(id1, id2) {
     setInitTiles((prevTile) => {
@@ -64,12 +89,14 @@ export const GameProvider = ({ children }) => {
       })
     })
   }
+
   function clean() {
     setInitTiles((prevTile) => {
       return prevTile.map((item) => {
         return item.selected == true ? { ...item, selected: !item.selected } : item;
       })
     })
+
   }
 
   function reset() {
@@ -78,20 +105,25 @@ export const GameProvider = ({ children }) => {
         return { ...tile, won: false }
       })
     })
-    resetGame();
-    countZero();
+    setGameWon(false);
+    setmoveCount(0);
+    setSelected([]);
+    setAllRevealed(true)
   }
   const value = {
     gameWon,
-    resetGame,
     completeGame,
     moveCount,
-    incrementMoveCount,
-    countZero,
     toggle,
     initTiles,
     selection,
-    reset
+    reset,
+    animationTiming,
+    setAnimationTiming,
+    selection,
+    allRevealed,
+    setAllRevealed,
+    hint
   }
   return (
     <GameContext.Provider value={value}>
