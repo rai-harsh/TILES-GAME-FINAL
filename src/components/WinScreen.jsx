@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import './styling/App.css';
-import { useGame } from './Context/GeneralContext.jsx';
-
+import { useGame } from '../Context/GeneralContext';
 export default function WinScreen(props){
     const { reset} = useGame();
     const[Reset,SetReset]=useState(false)

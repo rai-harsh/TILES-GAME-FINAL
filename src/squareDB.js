@@ -1,14 +1,15 @@
-// Create and populate the arr array
-var arr = [];
-for (var i = 1; i < 3; i++) {
-    arr.push({
-        number :i,
-        img:`../public/icons/${i}.svg`
-    });
-    arr.push({
-        number :i,
-        img:`../public/icons/${i}.svg`      
-    });
+const tiles = 6;
+const tilesSq = tiles * tiles;
+
+// Create and populate the arr array with pairs of tiles
+let arr = [];
+for (let i = 1; i <= tilesSq / 2; i++) {
+    const tileData = {
+        number: i,
+        img: `/icons/${i}.svg`  // Correct path for public folder
+    };
+    arr.push({ ...tileData });
+    arr.push({ ...tileData }); // Add the pair
 }
 
 // Shuffle the arr array
@@ -23,15 +24,13 @@ function shuffleArray(array) {
     return array;
 }
 
-// Initialize the initialTiles array after arr is created and shuffled
-const initialTiles = Array.from({ length: 4 }).map((_, index) => {
-    return {
-        id: index + 1,
-        selected: false,
-        won: false,
-        num: arr[index].number,
-        img: arr[index].img
-    };
-});
+// Initialize the initialTiles array using the shuffled arr
+const initialTiles = arr.map((tile, index) => ({
+    id: index + 1,
+    selected: false,
+    won: false,
+    num: tile.number,
+    img: tile.img
+}));
 
 export default initialTiles;
